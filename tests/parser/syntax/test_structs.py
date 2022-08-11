@@ -532,15 +532,6 @@ struct X:
     baz: int128
 x: X
     """,
-    """
-struct C:
-    a: uint256
-    b: uint256
-
-@external
-def foo():
-    bar: C = C({a: 1, b: block.timestamp})
-    """,
 ]
 
 

@@ -125,8 +125,6 @@ struct X:
 @external
 def add_record():
     a: X = X({x: block.timestamp})
-    a.x = block.gaslimit
-    a.x = block.basefee
     a.x = 5
     """,
     """
@@ -135,11 +133,6 @@ def foo():
     x: uint256 = block.difficulty + 185
     if tx.origin == self:
         y: Bytes[35] = concat(block.prevhash, b"dog")
-    """,
-    """
-@external
-def foo() -> uint256:
-    return tx.gasprice
     """,
 ]
 

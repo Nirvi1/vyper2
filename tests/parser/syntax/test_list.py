@@ -1,7 +1,12 @@
 import pytest
 
 from vyper import compiler
-from vyper.exceptions import InvalidLiteral, InvalidType, StructureException, TypeMismatch
+from vyper.exceptions import (
+    InvalidLiteral,
+    InvalidType,
+    StructureException,
+    TypeMismatch,
+)
 
 fail_list = [
     (
@@ -94,7 +99,7 @@ bar: int128[3]
 def foo():
     self.bar = []
     """,
-        InvalidType,
+        InvalidLiteral,
     ),
     (
         """
@@ -225,74 +230,6 @@ def foo(x: int128[2][2]):
     self.y = x
     """,
         TypeMismatch,
-    ),
-    (
-        """
-@external
-def foo():
-    for str in ["hello", "world"]:
-        pass
-    """,
-        StructureException,
-    ),
-    (
-        """
-@external
-def foo():
-    a: String[6] = "hello"
-    b: String[6] = "world"
-    for str in [a, b]:
-        pass
-    """,
-        StructureException,
-    ),
-    (
-        """
-a: String[6]
-b: String[6]
-
-@external
-def foo():
-    self.a = "hello"
-    self.b = "world"
-    for str in [self.a, self.b]:
-        pass
-    """,
-        StructureException,
-    ),
-    (
-        """
-@external
-def foo():
-    for str in [b"hello,", b"world"]:
-        pass
-    """,
-        StructureException,
-    ),
-    (
-        """
-@external
-def foo():
-    a: Bytes[6] = b"hello"
-    b: Bytes[6] = b"world"
-    for str in [a, b]:
-        pass
-    """,
-        StructureException,
-    ),
-    (
-        """
-a: Bytes[6]
-b: Bytes[6]
-
-@external
-def foo():
-    self.a = b"hello"
-    self.b = b"world"
-    for str in [self.a, self.b]:
-        pass
-    """,
-        StructureException,
     ),
 ]
 

@@ -9,7 +9,6 @@ from hypothesis.extra.lark import LarkStrategy
 
 from tests.grammar.conftest import get_lark_grammar
 from vyper.ast import Module, parse_to_ast
-from vyper.ast.pre_parser import pre_parse
 
 
 def test_basic_grammar(lark_grammar):
@@ -102,9 +101,9 @@ def has_no_docstrings(c):
 
 
 @pytest.mark.fuzzing
-@given(code=from_grammar().filter(lambda c: utf8_encodable(c)))
+@given(code=from_grammar().filter(lambda c: has_no_docstrings(c)))
 @hypothesis.settings(deadline=400, max_examples=500, suppress_health_check=(HealthCheck.too_slow,))
 def test_grammar_bruteforce(code):
     if utf8_encodable(code):
-        tree = parse_to_ast(pre_parse(code + "\n")[1])
+        tree = parse_to_ast(code + "\n")
         assert isinstance(tree, Module)

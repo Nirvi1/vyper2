@@ -50,14 +50,12 @@ def test_indent_indents_text():
 
 def test_indent_raises_value_errors():
     with pytest.raises(
-        ValueError,
-        match="Must provide indentation chars for each line",
+        ValueError, match="Must provide indentation chars for each line",
     ):
         indent(TEST_TEXT, indent_chars=[" "], level=1)
 
     with pytest.raises(
-        ValueError,
-        match="Unrecognized indentation characters value",
+        ValueError, match="Unrecognized indentation characters value",
     ):
         indent(TEST_TEXT, indent_chars=None, level=1)  # type: ignore
 
@@ -106,11 +104,7 @@ class ParserException(Exception):
 
 def test_annotate_source_code_marks_positions_in_source_code():
     annotation = annotate_source_code(
-        TEST_SOURCE_CODE,
-        22,
-        col_offset=16,
-        context_lines=0,
-        line_numbers=False,
+        TEST_SOURCE_CODE, 22, col_offset=16, context_lines=0, line_numbers=False,
     )
     assert (
         annotation
@@ -123,11 +117,7 @@ def test_annotate_source_code_marks_positions_in_source_code():
     )
 
     annotation = annotate_source_code(
-        TEST_SOURCE_CODE,
-        22,
-        col_offset=15,
-        context_lines=1,
-        line_numbers=False,
+        TEST_SOURCE_CODE, 22, col_offset=15, context_lines=1, line_numbers=False,
     )
     assert (
         annotation
@@ -142,11 +132,7 @@ def test_annotate_source_code_marks_positions_in_source_code():
     )
 
     annotation = annotate_source_code(
-        TEST_SOURCE_CODE,
-        22,
-        col_offset=20,
-        context_lines=2,
-        line_numbers=False,
+        TEST_SOURCE_CODE, 22, col_offset=20, context_lines=2, line_numbers=False,
     )
     assert (
         annotation
@@ -163,11 +149,7 @@ def test_annotate_source_code_marks_positions_in_source_code():
     )
 
     annotation = annotate_source_code(
-        TEST_SOURCE_CODE,
-        1,
-        col_offset=5,
-        context_lines=3,
-        line_numbers=True,
+        TEST_SOURCE_CODE, 1, col_offset=5, context_lines=3, line_numbers=True,
     )
     assert (
         annotation
@@ -183,11 +165,7 @@ def test_annotate_source_code_marks_positions_in_source_code():
     )
 
     annotation = annotate_source_code(
-        TEST_SOURCE_CODE,
-        36,
-        col_offset=8,
-        context_lines=4,
-        line_numbers=True,
+        TEST_SOURCE_CODE, 36, col_offset=8, context_lines=4, line_numbers=True,
     )
     assert (
         annotation
@@ -204,11 +182,7 @@ def test_annotate_source_code_marks_positions_in_source_code():
     )
 
     annotation = annotate_source_code(
-        TEST_SOURCE_CODE,
-        15,
-        col_offset=8,
-        context_lines=11,
-        line_numbers=True,
+        TEST_SOURCE_CODE, 15, col_offset=8, context_lines=11, line_numbers=True,
     )
     assert (
         annotation
@@ -243,11 +217,7 @@ def test_annotate_source_code_marks_positions_in_source_code():
     )
 
     annotation = annotate_source_code(
-        TEST_SOURCE_CODE,
-        15,
-        col_offset=None,
-        context_lines=3,
-        line_numbers=True,
+        TEST_SOURCE_CODE, 15, col_offset=None, context_lines=3, line_numbers=True,
     )
     assert (
         annotation
@@ -265,11 +235,7 @@ def test_annotate_source_code_marks_positions_in_source_code():
     )
 
     annotation = annotate_source_code(
-        TEST_SOURCE_CODE,
-        15,
-        col_offset=None,
-        context_lines=2,
-        line_numbers=False,
+        TEST_SOURCE_CODE, 15, col_offset=None, context_lines=2, line_numbers=False,
     )
     assert (
         annotation
@@ -286,12 +252,10 @@ def test_annotate_source_code_marks_positions_in_source_code():
 
 
 @pytest.mark.parametrize(
-    "bad_lineno",
-    (-100, -1, 0, 45, 1000),
+    "bad_lineno", (-100, -1, 0, 45, 1000),
 )
 def test_annotate_source_code_raises_value_errors(bad_lineno):
     with pytest.raises(
-        ValueError,
-        match="Line number is out of range",
+        ValueError, match="Line number is out of range",
     ):
         annotate_source_code(TEST_SOURCE_CODE, bad_lineno)

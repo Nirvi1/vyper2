@@ -270,10 +270,6 @@ def foo(a: decimal = 3.14, b: decimal[2] = [1.337, 2.69]): pass
 def foo(a: address = msg.sender, b: address[3] = [msg.sender, tx.origin, block.coinbase]): pass
     """,
     """
-@internal
-def foo(a: address = msg.sender, b: address[3] = [msg.sender, tx.origin, block.coinbase]): pass
-    """,
-    """
 @external
 @payable
 def foo(a: uint256 = msg.value): pass
@@ -281,27 +277,7 @@ def foo(a: uint256 = msg.value): pass
     """
 @external
 def foo(a: uint256 = 2**8): pass
-    """,
-    """
-struct Bar:
-    a: address
-    b: uint256
-
-@external
-def foo(bar: Bar = Bar({a: msg.sender, b: 1})): pass
-    """,
-    """
-struct Baz:
-    c: address
-    d: int128
-
-struct Bar:
-    a: address
-    b: Baz
-
-@external
-def foo(bar: Bar = Bar({a: msg.sender, b: Baz({c: block.coinbase, d: -10})})): pass
-    """,
+     """,
 ]
 
 
@@ -396,6 +372,14 @@ def foo(a: uint256[2] = [2, self.x]): pass
 def foo(a: uint256 = msg.value): pass
 """,
         NonPayableViolation,
+    ),
+    (
+        """
+# msg.sender in a private function
+@internal
+def foo(a: address = msg.sender): pass
+    """,
+        StateAccessViolation,
     ),
 ]
 

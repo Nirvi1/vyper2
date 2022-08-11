@@ -83,12 +83,9 @@ def _none_addr(datatype, data):
 CONCISE_NORMALIZERS = (_none_addr,)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def tester():
-    # set absurdly high gas limit so that london basefee never adjusts
-    # (note: 2**63 - 1 is max that evm allows)
-    custom_genesis = PyEVMBackend._generate_genesis_params(overrides={"gas_limit": 10 ** 10})
-    custom_genesis["base_fee_per_gas"] = 0
+    custom_genesis = PyEVMBackend._generate_genesis_params(overrides={"gas_limit": 4500000})
     backend = PyEVMBackend(genesis_parameters=custom_genesis)
     return EthereumTester(backend=backend)
 
@@ -97,21 +94,19 @@ def zero_gas_price_strategy(web3, transaction_params=None):
     return 0  # zero gas price makes testing simpler.
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def w3(tester):
     w3 = Web3(EthereumTesterProvider(tester))
-    w3.eth.set_gas_price_strategy(zero_gas_price_strategy)
+    w3.eth.setGasPriceStrategy(zero_gas_price_strategy)
     return w3
 
 
-def _get_contract(w3, source_code, no_optimize, *args, **kwargs):
+def _get_contract(w3, source_code, *args, **kwargs):
     out = compiler.compile_code(
         source_code,
         ["abi", "bytecode"],
         interface_codes=kwargs.pop("interface_codes", None),
-        no_optimize=no_optimize,
         evm_version=kwargs.pop("evm_version", None),
-        show_gas_estimates=True,  # Enable gas estimates for testing
     )
     LARK_GRAMMAR.parse(source_code + "\n")  # Test grammar.
     abi = out["abi"]
@@ -126,19 +121,17 @@ def _get_contract(w3, source_code, no_optimize, *args, **kwargs):
     }
     tx_info.update(kwargs)
     tx_hash = deploy_transaction.transact(tx_info)
-    address = w3.eth.get_transaction_receipt(tx_hash)["contractAddress"]
-    return w3.eth.contract(
-        address,
-        abi=abi,
-        bytecode=bytecode,
-        ContractFactoryClass=VyperContract,
+    address = w3.eth.getTransactionReceipt(tx_hash)["contractAddress"]
+    contract = w3.eth.contract(
+        address, abi=abi, bytecode=bytecode, ContractFactoryClass=VyperContract,
     )
+    return contract
 
 
-@pytest.fixture(scope="module")
-def get_contract(w3, no_optimize):
+@pytest.fixture
+def get_contract(w3):
     def get_contract(source_code, *args, **kwargs):
-        return _get_contract(w3, source_code, no_optimize, *args, **kwargs)
+        return _get_contract(w3, source_code, *args, **kwargs)
 
     return get_contract
 
@@ -146,13 +139,14 @@ def get_contract(w3, no_optimize):
 @pytest.fixture
 def get_logs(w3):
     def get_logs(tx_hash, c, event_name):
-        tx_receipt = w3.eth.get_transaction_receipt(tx_hash)
-        return c._classic_contract.events[event_name]().processReceipt(tx_receipt)
+        tx_receipt = w3.eth.getTransactionReceipt(tx_hash)
+        logs = c._classic_contract.events[event_name]().processReceipt(tx_receipt)
+        return logs
 
     return get_logs
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def assert_tx_failed(tester):
     def assert_tx_failed(function_to_test, exception=TransactionFailed, exc_text=None):
         snapshot_id = tester.take_snapshot()
@@ -160,7 +154,6 @@ def assert_tx_failed(tester):
             function_to_test()
         tester.revert_to_snapshot(snapshot_id)
         if exc_text:
-            # TODO test equality
-            assert exc_text in str(excinfo.value), (exc_text, excinfo.value)
+            assert exc_text in str(excinfo.value)
 
     return assert_tx_failed

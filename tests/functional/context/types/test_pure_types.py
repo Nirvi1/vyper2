@@ -8,10 +8,17 @@ from vyper.exceptions import (
     UnexpectedValue,
 )
 from vyper.semantics.types.value.address import AddressPrimitive
-from vyper.semantics.types.value.array_value import BytesArrayPrimitive, StringPrimitive
+from vyper.semantics.types.value.array_value import (
+    BytesArrayPrimitive,
+    StringPrimitive,
+)
 from vyper.semantics.types.value.boolean import BoolPrimitive
 from vyper.semantics.types.value.bytes_fixed import Bytes32Primitive
-from vyper.semantics.types.value.numeric import DecimalPrimitive, Int128Primitive, Uint256Primitive
+from vyper.semantics.types.value.numeric import (
+    DecimalPrimitive,
+    Int128Primitive,
+    Uint256Primitive,
+)
 
 BASE_SOURCE = """
 "Add a docstring so the target test node doesn't become one."
@@ -32,10 +39,7 @@ PRIMITIVES = {
 VALID_LITERALS = {
     AddressPrimitive: ["0x6B175474E89094C44Da98b954EedeAC495271d0F"],
     BoolPrimitive: ["True", "False"],
-    Bytes32Primitive: [
-        "0x6b175474e89094c44da98b954eedeac495271d0f4da98b954eedeac495271d0f",
-        "0x6B175474E89094C44DA98B954EEDEAC495271D0F4DA98B954EEDEAC495271D0F",
-    ],
+    Bytes32Primitive: ["0x6B175474E89094C44Da98b954EedeAC495271d0F4Da98b954EedeAC495271d0F"],
     BytesArrayPrimitive: ["b''", "b'this is thirty three bytes long!!'", r"b'\xbe\xef'"],
     DecimalPrimitive: ["-1.666", "3.31337", "8008135.0", "1.2345678901"],
     Int128Primitive: ["-1", "0", "12", "42"],

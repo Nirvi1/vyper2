@@ -24,6 +24,12 @@ def foo(x: int128):
         pass
     """,
     """
+bar: int128[3]
+@external
+def foo():
+    self.bar = []
+    """,
+    """
 @external
 def foo():
     x: String[100] = "these bytes are nо gооd because the o's are from the Russian alphabet"

@@ -44,12 +44,6 @@ INPUT_JSON = {
 }
 
 
-def _no_errors(output_json):
-    return "errors" not in output_json or not any(
-        err["severity"] == "error" for err in output_json["errors"]
-    )
-
-
 def test_to_stdout(tmp_path, capfd):
     path = tmp_path.joinpath("input.json")
     with path.open("w") as fp:
@@ -57,7 +51,7 @@ def test_to_stdout(tmp_path, capfd):
     _parse_args([path.absolute().as_posix()])
     out, _ = capfd.readouterr()
     output_json = json.loads(out)
-    assert _no_errors(output_json)
+    assert "errors" not in output_json
     assert "contracts/foo.vy" in output_json["sources"]
     assert "contracts/bar.vy" in output_json["sources"]
 
@@ -71,7 +65,7 @@ def test_to_file(tmp_path):
     assert output_path.exists()
     with output_path.open() as fp:
         output_json = json.load(fp)
-    assert _no_errors(output_json)
+    assert "errors" not in output_json
     assert "contracts/foo.vy" in output_json["sources"]
     assert "contracts/bar.vy" in output_json["sources"]
 
@@ -97,6 +91,6 @@ def test_traceback(tmp_path, capfd):
     _parse_args([path.absolute().as_posix()])
     out, _ = capfd.readouterr()
     output_json = json.loads(out)
-    assert not _no_errors(output_json)
+    assert "errors" in output_json
     with pytest.raises(JSONError):
         _parse_args([path.absolute().as_posix(), "--traceback"])

@@ -12,11 +12,7 @@ def hardtest(arg1: Bytes[64], arg2: Bytes[64]) -> Bytes[128]:
     # Make sure underlying structe is correctly right padded
     classic_contract = c._classic_contract
     func = classic_contract.functions.hardtest(b"hello" * 5, b"hello" * 10)
-    tx = func.buildTransaction(
-        {
-            "gasPrice": 0,
-        }
-    )
+    tx = func.buildTransaction()
     del tx["chainId"]
     del tx["gasPrice"]
 
@@ -32,6 +28,8 @@ def hardtest(arg1: Bytes[64], arg2: Bytes[64]) -> Bytes[128]:
     len_value = int.from_bytes(dyn_section[:32], "big")
 
     assert len_value == len(b"hello" * 15)
-    assert dyn_section[32 : 32 + len_value] == b"hello" * 15
+    assert dyn_section[32 : 32 + len_value] == b"hello" * 15  # noqa: E203
     # second right pad assert
-    assert dyn_section[32 + len_value :] == b"\x00" * (len(dyn_section) - 32 - len_value)
+    assert dyn_section[32 + len_value :] == b"\x00" * (  # noqa: E203
+        len(dyn_section) - 32 - len_value
+    )

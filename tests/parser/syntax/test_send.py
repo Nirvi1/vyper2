@@ -80,11 +80,7 @@ x: decimal
 
 @external
 def foo():
-    send(
-        0x1234567890123456789012345678901234567890,
-        as_wei_value(convert(floor(self.x), int128),
-        "wei")
-    )
+    send(0x1234567890123456789012345678901234567890, as_wei_value(floor(self.x), "wei"))
     """,
     """
 x: uint256

@@ -1,61 +1,55 @@
 from decimal import Decimal, getcontext
 
-import pytest
+from vyper.exceptions import TypeMismatch
 
-from vyper.exceptions import DecimalOverrideException, TypeMismatch
-
-
-def test_decimal_override():
-    # consumers of vyper, even as a library, are not allowed to override Decimal precision
-    with pytest.raises(DecimalOverrideException):
-        getcontext().prec = 100
+getcontext().prec = 78  # MAX_UINT256 < 1e78
 
 
 def test_decimal_test(get_contract_with_gas_estimation):
     decimal_test = """
 @external
-def foo() -> int256:
+def foo() -> int128:
     return(floor(999.0))
 
 @external
-def fop() -> int256:
+def fop() -> int128:
     return(floor(333.0 + 666.0))
 
 @external
-def foq() -> int256:
+def foq() -> int128:
     return(floor(1332.1 - 333.1))
 
 @external
-def bar() -> int256:
+def bar() -> int128:
     return(floor(27.0 * 37.0))
 
 @external
-def baz() -> int256:
+def baz() -> int128:
     x: decimal = 27.0
     return(floor(x * 37.0))
 
 @external
-def mok() -> int256:
+def mok() -> int128:
     return(floor(999999.0 / 7.0 / 11.0 / 13.0))
 
 @external
-def mol() -> int256:
+def mol() -> int128:
     return(floor(499.5 / 0.5))
 
 @external
-def mom() -> int256:
+def mom() -> int128:
     return(floor(1498.5 / 1.5))
 
 @external
-def moo() -> int256:
+def moo() -> int128:
     return(floor(2997.0 / 3.0))
 
 @external
-def foom() -> int256:
+def foom() -> int128:
     return(floor(1999.0 % 1000.0))
 
 @external
-def foop() -> int256:
+def foop() -> int128:
     return(floor(1999.0 % 1000.0))
     """
 
@@ -141,10 +135,10 @@ def test_decimal_min_max_literals(assert_tx_failed, get_contract_with_gas_estima
     code = """
 @external
 def maximum():
-    a: decimal = 18707220957835557353007165858768422651595.9365500927
+    a: decimal = 170141183460469231731687303715884105726.
 @external
 def minimum():
-    a: decimal = -18707220957835557353007165858768422651595.9365500928
+    a: decimal = -170141183460469231731687303715884105726.
     """
     c = get_contract_with_gas_estimation(code)
 

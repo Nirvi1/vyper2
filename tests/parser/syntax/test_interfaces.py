@@ -101,15 +101,6 @@ def test():
     assert self.token.totalSupply() > 0
     """,
     """
-interface Foo:
-    def foo(): view
-
-@external
-def test() -> (bool, Foo):
-    x: Foo = Foo(msg.sender)
-    return True, x
-    """
-    """
 from vyper.interfaces import ERC20
 
 a: public(ERC20)
@@ -153,23 +144,6 @@ a: public(ERC20)
 @external
 def test():
     b: address = self.a.address
-    """,
-    """
-interface MyInterface:
-    def some_func(): nonpayable
-
-my_interface: MyInterface[3]
-idx: uint256
-
-@external
-def __init__():
-    self.my_interface[self.idx] = MyInterface(ZERO_ADDRESS)
-    """,
-    """
-interface MyInterface:
-    def kick(): payable
-
-kickers: HashMap[address, MyInterface]
     """,
 ]
 

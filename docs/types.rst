@@ -48,21 +48,21 @@ Operator              Description
 Short-circuiting of boolean operators (``or`` and ``and``) is consistent with
 the behavior of Python.
 
-.. index:: ! intN, ! int, ! signed integer
+.. index:: ! int256, ! int, ! integer
 
-Signed Integer (N bit)
+Signed Integer (256 bit)
 ------------------------
 
-**Keyword:** ``intN`` (e.g., ``int128``)
+**Keyword:** ``int256``
 
-A signed integer which can store positive and negative integers. ``N`` must be a multiple of 8 between 8 and 256 (inclusive).
+A signed integer (256 bit) is a type to store positive and negative integers.
 
 Values
 ******
 
-Signed integer values between -2\ :sup:`N-1` and (2\ :sup:`N-1` - 1), inclusive.
+Signed integer values between -2\ :sup:`255` and (2\ :sup:`255` - 1), inclusive.
 
-Integer literals cannot have a decimal point even if the decimal value is zero. For example, ``2.0`` cannot be interpreted as an integer.
+Interger literals cannot have a decimal point even if the decimal value is zero. For example, ``2.0`` cannot be interpreted as an integer.
 
 Operators
 *********
@@ -83,7 +83,7 @@ Operator    Description
 ``x > y``   Greater than
 ==========  ================
 
-``x`` and ``y`` must both be of the same type.
+``x`` and ``y`` must be of the type ``int256``.
 
 Arithmetic Operators
 ^^^^^^^^^^^^^^^^^^^^
@@ -100,29 +100,23 @@ Operator       Description
 ``x % y``      Modulo
 =============  ======================
 
-``x`` and ``y`` must both be of the same type.
+``x`` and ``y`` must be of the type ``int256``.
 
-.. note::
-    Arithmetic is currently only available for ``int128`` and ``int256`` types.
+.. index:: ! int128
 
-.. index:: ! uint, ! uintN, ! unsigned integer
+Signed Integer (128 bit)
+------------------------
 
-Unsigned Integer (N bit)
---------------------------
+**Keyword:** ``int128``
 
-**Keyword:** ``uintN`` (e.g., ``uint8``)
-
-A unsigned integer which can store positive integers. ``N`` must be a multiple of 8 between 8 and 256 (inclusive).
+A signed integer (128 bit) is a type to store positive and negative integers.
 
 Values
 ******
 
-Integer values between 0 and (2\ :sup:`N`-1).
+Signed integer values between -2\ :sup:`127` and (2\ :sup:`127` - 1), inclusive.
 
-Integer literals cannot have a decimal point even if the decimal value is zero. For example, ``2.0`` cannot be interpreted as an integer.
-
-.. note::
-    Integer literals are interpreted as ``int256`` by default. In cases where ``uint8`` is more appropriate, such as assignment, the literal might be interpreted as ``uint8``. Example: ``_variable: uint8 = _literal``. In order to explicitly cast a literal to a ``uint8`` use ``convert(_literal, uint8)``.
+Interger literals cannot have a decimal point even if the decimal value is zero. For example, ``2.0`` cannot be interpreted as an integer.
 
 Operators
 *********
@@ -143,7 +137,64 @@ Operator    Description
 ``x > y``   Greater than
 ==========  ================
 
-``x`` and ``y`` must be of the same type.
+``x`` and ``y`` must be of the type ``int128``.
+
+Arithmetic Operators
+^^^^^^^^^^^^^^^^^^^^
+
+=============  ======================
+Operator       Description
+=============  ======================
+``x + y``      Addition
+``x - y``      Subtraction
+``-x``         Unary minus/Negation
+``x * y``      Multiplication
+``x / y``      Division
+``x**y``       Exponentiation
+``x % y``      Modulo
+=============  ======================
+
+``x`` and ``y`` must be of the type ``int128``.
+
+.. index:: ! unit, ! uint256
+
+Unsigned Integer (256 bit)
+--------------------------
+
+**Keyword:** ``uint256``
+
+An unsigned integer (256 bit) is a type to store non-negative integers.
+
+Values
+******
+
+Integer values between 0 and (2\ :sup:`256`-1).
+
+Interger literals cannot have a decimal point even if the decimal value is zero. For example, ``2.0`` cannot be interpreted as an integer.
+
+.. note::
+    Integer literals are interpreted as ``int128`` by default. In cases where ``uint256`` is more appropriate, such as assignment, the literal might be interpreted as ``uint256``. Example: ``_variable: uint256 = _literal``. In order to explicitly cast a literal to a ``uint256`` use ``convert(_literal, uint256)``.
+
+Operators
+*********
+
+Comparisons
+^^^^^^^^^^^
+
+Comparisons return a boolean value.
+
+==========  ================
+Operator    Description
+==========  ================
+``x < y``   Less than
+``x <= y``  Less than or equal to
+``x == y``  Equals
+``x != y``  Does not equal
+``x >= y``  Greater than or equal to
+``x > y``   Greater than
+==========  ================
+
+``x`` and ``y`` must be of the type ``uint256``.
 
 Arithmetic Operators
 ^^^^^^^^^^^^^^^^^^^^
@@ -159,10 +210,7 @@ Operator                     Description
 ``x % y``                    Modulo
 ===========================  ======================
 
-``x`` and ``y`` must be of the same type.
-
-.. note::
-    Arithmetic is currently only available for ``uint8`` and ``uint256`` types.
+``x``, ``y`` and ``z`` must be of the type ``uint256``.
 
 Decimals
 --------
@@ -174,11 +222,9 @@ A decimal is a type to store a decimal fixed point value.
 Values
 ******
 
-A value with a precision of 10 decimal places between -18707220957835557353007165858768422651595.9365500928 (-2\ :sup:`167` / 10\ :sup:`10`) and 18707220957835557353007165858768422651595.9365500927 ((2\ :sup:`167` - 1) / 10\ :sup:`10`).
+A value with a precision of 10 decimal places between -2\ :sup:`127` and (2\ :sup:`127` - 1).
 
 In order for a literal to be interpreted as ``decimal`` it must include a decimal point.
-
-The ABI type (for computing method identifiers) of ``decimal`` is ``fixed168x10``.
 
 Operators
 *********
@@ -241,9 +287,8 @@ Member          Type        Description
 =============== =========== ==========================================================================
 ``balance``     ``uint256`` Balance of an address
 ``codehash``    ``bytes32`` Keccak of code at an address, ``EMPTY_BYTES32`` if no contract is deployed
-``codesize``    ``uint256`` Size of code deployed at an address, in bytes
+``codesize``    ``uint256`` Size of code deployed an address, in bytes
 ``is_contract`` ``bool``    Boolean indicating if a contract is deployed at an address
-``code``        ``Bytes``   Contract bytecode
 =============== =========== ==========================================================================
 
 Syntax as follows: ``_address.<member>``, where ``_address`` is of the type ``address`` and ``<member>`` is one of the above keywords.
@@ -252,15 +297,11 @@ Syntax as follows: ``_address.<member>``, where ``_address`` is of the type ``ad
 
     Operations such as ``SELFDESTRUCT`` and ``CREATE2`` allow for the removal and replacement of bytecode at an address. You should never assume that values of address members will not change in the future.
 
-.. note::
-
-    ``_address.code`` requires the usage of :func:`slice <slice>` to explicitly extract a section of contract bytecode. If the extracted section exceeds the bounds of bytecode, this will throw. You can check the size of ``_address.code`` using ``_address.codesize``.
-
-M-byte-wide Fixed Size Byte Array
+32-bit-wide Byte Array
 ----------------------
 
-**Keyword:** ``bytesM``
-This is an M-byte-wide byte array that is otherwise similar to dynamically sized byte arrays. On an ABI level, it is annotated as bytesM (e.g., bytes32).
+**Keyword:** ``bytes32``
+This is a 32-bit-wide byte array that is otherwise similar to byte arrays.
 
 **Example:**
 ::
@@ -269,8 +310,6 @@ This is an M-byte-wide byte array that is otherwise similar to dynamically sized
     hash: bytes32
     # Assignment
     self.hash = _hash
-
-    some_method_id: bytes4 = 0x01abcdefab
 
 Operators
 *********
@@ -292,16 +331,18 @@ Byte Arrays
 
 **Keyword:** ``Bytes``
 
-A byte array with a max size.
+A byte array with a fixed size.
 
 The syntax being ``Bytes[maxLen]``, where ``maxLen`` is an integer which denotes the maximum number of bytes.
 On the ABI level the Fixed-size bytes array is annotated as ``bytes``.
 
-Bytes literals may be given as bytes strings.
+Bytes literals may be given as bytes strings, hexadecimal, or binary.
 
 .. code-block:: python
 
     bytes_string: Bytes[100] = b"\x01"
+    hex_bytes: Bytes[100] = 0x01
+    binary_bytes: Bytes[100] = 0b00000001
 
 .. index:: !string
 
@@ -364,40 +405,6 @@ A two dimensional list can be declared with ``_name: _ValueType[inner_size][oute
     # Returning the value in row 0 column 4 (in this case 14)
     return exampleList2D[0][4]
 
-.. index:: !dynarrays
-
-Dynamic Arrays
-----------------
-
-Dynamic arrays represent bounded arrays whose length can be modified at runtime, up to a bound specified in the type. They can be declared with ``_name: DynArray[_Type, _Integer]``, where ``_Type`` can be of value type (except ``Bytes[N]`` and ``String[N]``) or reference type (except mappings).
-
-.. code-block:: python
-
-    # Defining a list
-    exampleList: DynArray[int128, 3]
-
-    # Setting values
-    exampleList = []
-    # exampleList.pop()  # would revert!
-    exampleList.append(42)  # exampleList now has length 1
-    exampleList.append(120)  # exampleList now has length 2
-    exampleList.append(356)  # exampleList now has length 3
-    # exampleList.append(1)  # would revert!
-
-    myValue: int128 = exampleList.pop()  # myValue == 356, exampleList now has length 2
-
-    # myValue = exampleList[2]  # would revert!
-
-    # Returning a value
-    return exampleList[0]
-
-
-.. note::
-    Attempting to access data past the runtime length of an array, ``pop()`` an empty array or ``append()`` to a full array will result in a runtime ``REVERT``. Attempting to pass an array in calldata which is larger than the array bound will result in a runtime ``REVERT``.
-
-
-In the ABI, they are represented as ``_Type[]``. For instance, ``DynArray[int128, 3]`` gets represented as ``int128[]``, and ``DynArray[DynArray[int128, 3], 3]`` gets represented as ``int128[][]``.
-
 .. _types-struct:
 
 Structs
@@ -429,11 +436,11 @@ Mappings
 
 Mappings are `hash tables <https://en.wikipedia.org/wiki/Hash_table>`_ that are virtually initialized such that every possible key exists and is mapped to a value whose byte-representation is all zeros: a type's :ref:`default value <types-initial>`.
 
-The key data is not stored in a mapping. Instead, its ``keccak256`` hash is used to look up a value. For this reason, mappings do not have a length or a concept of a key or value being "set".
+The key data is not stored in a mapping, instead its ``keccak256`` hash used to look up a value. For this reason mappings do not have a length or a concept of a key or value being "set".
 
 Mapping types are declared as ``HashMap[_KeyType, _ValueType]``.
 
-* ``_KeyType`` can be any base or bytes type. Mappings, interfaces or structs are not supported as key types.
+* ``_KeyType`` can be any base or bytes type. Mappings, interfaces or structs are not support as key types.
 * ``_ValueType`` can actually be any type, including mappings.
 
 .. note::
@@ -458,9 +465,9 @@ Mapping types are declared as ``HashMap[_KeyType, _ValueType]``.
 Initial Values
 ==============
 
-Unlike most programming languages, Vyper does not have a concept of ``null``. Instead, every variable type has a default value. To check if a variable is empty, you must compare it to the default value for its given type.
+Unlike most programming languages, Vyper does not have a concept of ``null``. Instead, every variable type has a default value. To check if a variable is empty, you must compare it to the default value for it's given type.
 
-To reset a variable to its default value, assign to it the built-in ``empty()`` function which constructs a zero value for that type.
+To reset a variable to it's default value, assign to it the built-in ``empty()`` function which constructs a zero value for that type.
 
 .. note::
 
@@ -475,17 +482,15 @@ Type        Default Value
 ``bool``    ``False``
 ``bytes32`` ``0x0000000000000000000000000000000000000000000000000000000000000000``
 ``decimal`` ``0.0``
-``uint8``   ``0``
 ``int128``  ``0``
-``int256``  ``0``
 ``uint256`` ``0``
 =========== ======================================================================
 
 .. note::
-    In ``Bytes``, the array starts with the bytes all set to ``'\x00'``.
+    In ``Bytes`` the array starts with the bytes all set to ``'\x00'``
 
 .. note::
-    In reference types, all the type's members are set to their initial values.
+    In reference types all the type's members are set to their initial values.
 
 
 .. _type_conversions:
@@ -493,16 +498,34 @@ Type        Default Value
 Type Conversions
 ================
 
-All type conversions in Vyper must be made explicitly using the built-in ``convert(a: atype, btype)`` function. Type conversions in Vyper are designed to be safe and intuitive. All type conversions will check that the input is in bounds for the output type. The general principles are:
+All type conversions in Vyper must be made explicitly using the built-in ``convert(a: atype, btype)`` function. Currently, the following type conversions are supported:
 
-* Except for conversions involving decimals and bools, the input is bit-for-bit preserved.
-* Conversions to bool map all nonzero inputs to 1.
-* When converting from decimals to integers, the input is truncated towards zero.
-* ``address`` types are treated as ``uint160``, except conversions with signed integers and decimals are not allowed.
-* Converting between right-padded (``bytes``, ``Bytes``, ``String``) and left-padded types, results in a rotation to convert the padding. For instance, converting from ``bytes20`` to ``address`` would result in rotating the input by 12 bytes to the right.
-* Converting between signed and unsigned integers reverts if the input is negative.
-* Narrowing conversions (e.g., ``int256 -> int128``) check that the input is in bounds for the output type.
-* Converting between bytes and int types results in sign-extension if the output type is signed. For instance, converting ``0xff`` (``bytes1``) to ``int8`` returns ``-1``.
-* Converting between bytes and int types which have different sizes follows the rule of going through the closest integer type, first. For instance, ``bytes1 -> int16`` is like ``bytes1 -> int8 -> int16`` (signextend, then widen). ``uint8 -> bytes20`` is like ``uint8 -> uint160 -> bytes20`` (rotate left 12 bytes).
-
-A small Python reference implementation is maintained as part of Vyper's test suite, it can be found `here <https://github.com/vyperlang/vyper/blob/c4c6afd07801a0cc0038cdd4007cc43860c54193/tests/parser/functions/test_convert.py#L318>`_. The motivation and more detailed discussion of the rules can be found `here <https://github.com/vyperlang/vyper/issues/2507>`_.
+================ ================== ============================== =================================
+In (``atype``)   Out (``btype``)    Allowable Values               Additional Notes
+================ ================== ============================== =================================
+``bool``         ``decimal``        All                            ``0.0`` or ``1.0``
+``bool``         ``int128``         All                            ``0`` or ``1``
+``bool``         ``uint256``        All                            ``0`` or ``1``
+``bool``         ``bytes32``        All                            ``0x00`` or ``0x01``
+``bool``         ``Bytes``          All
+``decimal``      ``bool``           All                            Returns ``a != 0.0``
+``decimal``      ``int128``         All                            Value is truncated
+``decimal``      ``uint256``        ``a >= 0.0``                   Value is truncated
+``decimal``      ``bytes32``        All
+``decimal``      ``Bytes``          All
+``int128``       ``bool``           All                            Returns ``a != 0``
+``int128``       ``decimal``        All
+``int128``       ``uint256``        ``a >= 0``                     Cannot convert negative values
+``int128``       ``bytes32``        All
+``int128``       ``Bytes``          All
+``uint256``      ``bool``           All                            Returns ``a != 0``
+``uint256``      ``decimal``        ``a <= MAX_DECIMAL``
+``uint256``      ``int128``         ``a <= MAX_INT128``
+``uint256``      ``bytes32``        All
+``uint256``      ``Bytes``          All
+``bytes32``      ``bool``           All                            ``True`` if ``a`` is not empty
+``bytes32``      ``decimal``        All
+``bytes32``      ``int128``         All
+``bytes32``      ``uint256``        All
+``bytes32``      ``Bytes``          All
+================ ================== ============================== =================================

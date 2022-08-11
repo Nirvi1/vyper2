@@ -3,10 +3,8 @@
 # https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md
 
 from vyper.interfaces import ERC20
-from vyper.interfaces import ERC20Detailed
 
 implements: ERC20
-implements: ERC20Detailed
 
 event Transfer:
     sender: indexed(address)
@@ -18,9 +16,9 @@ event Approval:
     spender: indexed(address)
     value: uint256
 
-name: public(String[32])
+name: public(String[64])
 symbol: public(String[32])
-decimals: public(uint8)
+decimals: public(uint256)
 
 # NOTE: By declaring `balanceOf` as public, vyper automatically generates a 'balanceOf()' getter
 #       method to allow access to account balances.
@@ -35,8 +33,8 @@ minter: address
 
 
 @external
-def __init__(_name: String[32], _symbol: String[32], _decimals: uint8, _supply: uint256):
-    init_supply: uint256 = _supply * 10 ** convert(_decimals, uint256)
+def __init__(_name: String[64], _symbol: String[32], _decimals: uint256, _supply: uint256):
+    init_supply: uint256 = _supply * 10 ** _decimals
     self.name = _name
     self.symbol = _symbol
     self.decimals = _decimals

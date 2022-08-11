@@ -30,13 +30,11 @@ def create_exchange(w3, get_contract):
 
 
 @pytest.fixture
-def factory(get_contract, no_optimize):
+def factory(get_contract):
     with open("examples/factory/Exchange.vy") as f:
         code = f.read()
 
-    exchange_interface = vyper.compile_code(
-        code, output_formats=["bytecode_runtime"], no_optimize=no_optimize
-    )
+    exchange_interface = vyper.compile_code(code, output_formats=["bytecode_runtime"])
     exchange_deployed_bytecode = exchange_interface["bytecode_runtime"]
 
     with open("examples/factory/Factory.vy") as f:

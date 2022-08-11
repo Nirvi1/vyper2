@@ -96,7 +96,7 @@ Chain Interaction
 
 .. py:function:: create_forwarder_to(target: address, value: uint256 = 0[, salt: bytes32]) -> address
 
-    Deploys a small contract that duplicates the logic of the contract at ``target``, but has its own state since every call to ``target`` is made using ``DELEGATECALL`` to ``target``. To the end user, this should be indistinguishable from an independantly deployed contract with the same code as ``target``.
+    Deploys a small contract that duplicates the logic of the contract at ``target``, but has it's own state since every call to ``target`` is made using ``DELEGATECALL`` to ``target``. To the end user, this should be indistinguishable from an independantly deployed contract with the same code as ``target``.
 
 .. note::
 
@@ -114,24 +114,21 @@ Chain Interaction
         def foo(_target: address) -> address:
             return create_forwarder_to(_target)
 
-.. py:function:: raw_call(to: address, data: Bytes, max_outsize: int = 0, gas: uint256 = gasLeft, value: uint256 = 0, is_delegate_call: bool = False, is_static_call: bool = False, revert_on_failure: bool = True) -> Bytes[max_outsize]
+.. py:function:: raw_call(to: address, data: Bytes, max_outsize: int = 0, gas: uint256 = gasLeft, value: uint256 = 0, is_delegate_call: bool = False, is_static_call: bool = False) -> Bytes[max_outsize]
 
     Call to the specified Ethereum address.
 
     * ``to``: Destination address to call to
     * ``data``: Data to send to the destination address
     * ``max_outsize``: Maximum length of the bytes array returned from the call. If the returned call data exceeds this length, only this number of bytes is returned.
-    * ``gas``: The amount of gas to attach to the call. If not set, all remaining gas is forwarded.
+    * ``gas``: The amount of gas to attach to the call. If not set, all remainaing gas is forwarded.
     * ``value``: The wei value to send to the address (Optional, default ``0``)
     * ``is_delegate_call``: If ``True``, the call will be sent as ``DELEGATECALL`` (Optional, default ``False``)
     * ``is_static_call``: If ``True``, the call will be sent as ``STATICCALL`` (Optional, default ``False``)
-    * ``revert_on_failure``: If ``True``, the call will revert on a failure, otherwise ``success`` will be returned (Optional, default ``True``)
 
     Returns the data returned by the call as a ``Bytes`` list, with ``max_outsize`` as the max length.
 
     Returns ``None`` if ``max_outsize`` is omitted or set to ``0``.
-
-    Returns ``success`` in a tuple if ``revert_on_failure`` is set to ``False``.
 
     .. note::
 
@@ -145,15 +142,6 @@ Chain Interaction
         @payable
         def foo(_target: address) -> Bytes[32]:
             response: Bytes[32] = raw_call(_target, 0xa9059cbb, max_outsize=32, value=msg.value)
-            return response
-
-        @external
-        @payable
-        def bar(_target: address) -> Bytes[32]:
-            success: bool = False
-            response: Bytes[32] = b""
-            success, response = raw_call(_target, 0xa9059cbb, max_outsize=32, value=msg.value, revert_on_failure=False)
-            assert success
             return response
 
 .. py:function:: raw_log(topics: bytes32[4], data: Union[Bytes, bytes32]) -> None
@@ -262,12 +250,12 @@ Cryptography
         @view
         def foo(hash: bytes32, v: uint256, r:uint256, s:uint256) -> address:
             return ecrecover(hash, v, r, s)
-
+    
     .. code-block:: python
 
         >>> ExampleContract.foo('0x6c9c5e133b8aafb2ea74f524a5263495e7ae5701c7248805f7b511d973dc7055',
              28,
-             78616903610408968922803823221221116251138855211764625814919875002740131251724,
+             78616903610408968922803823221221116251138855211764625814919875002740131251724, 
              37668412420813231458864536126575229553064045345107737433087067088194345044408
             )
         '0x9eE53ad38Bb67d745223a4257D7d48cE973FeB7A'
@@ -334,7 +322,7 @@ Data Manipulation
     Converts a variable or literal from one type to another.
 
     * ``value``: Value to convert
-    * ``type_``: The destination type to convert to (e.g., ``bool``, ``decimal``, ``int128``, ``uint256`` or ``bytes32``)
+    * ``type_``: The destination type to convert to (``bool``, ``decimal``, ``int128``, ``uint256`` or ``bytes32``)
 
     Returns a value of the type specified by ``type_``.
 
@@ -354,8 +342,8 @@ Data Manipulation
 
         @external
         @view
-        def foo(b: Bytes[32]) -> address:
-            return extract32(b, 0, output_type=address)
+        def foo(Bytes[32]) -> address:
+            return extract32(b, 12, output_type=address)
 
     .. code-block:: python
 
@@ -368,7 +356,7 @@ Data Manipulation
 
     * ``b``: value being sliced
     * ``start``: start position of the slice
-    * ``length``: length of the slice, must be constant. Immutables and variables are not supported.
+    * ``length``: length of the slice
 
     If the value being sliced is a ``Bytes`` or ``bytes32``, the return type is ``Bytes``.  If it is a ``String``, the return type is ``String``.
 
@@ -376,7 +364,7 @@ Data Manipulation
 
         @external
         @view
-        def foo(s: String[32]) -> String[5]:
+        def foo(s: string[32]) -> string[5]:
             return slice(s, 4, 5)
 
     .. code-block:: python
@@ -405,7 +393,7 @@ Math
         >>> ExampleContract.foo(-31337)
         31337
 
-.. py:function:: ceil(value: decimal) -> int256
+.. py:function:: ceil(value: decimal) -> int128
 
     Round a decimal up to the nearest integer.
 
@@ -415,15 +403,15 @@ Math
 
         @external
         @view
-        def foo(x: decimal) -> int256:
-            return ceil(x)
+        def foo(value: decimal) -> uint256:
+            return ceil(value)
 
     .. code-block:: python
 
         >>> ExampleContract.foo(3.1337)
         4
 
-.. py:function:: floor(value: decimal) -> int256
+.. py:function:: floor(value: decimal) -> int128
 
     Round a decimal down to the nearest integer.
 
@@ -433,8 +421,8 @@ Math
 
         @external
         @view
-        def foo(x: decimal) -> int256:
-            return floor(x)
+        def foo(value: decimal) -> uint256:
+            return floor(value)
 
     .. code-block:: python
 
@@ -443,7 +431,7 @@ Math
 
 .. py:function:: max(a: numeric, b: numeric) -> numeric
 
-    Return the greater value of ``a`` and ``b``. The input values may be any numeric type as long as they are both of the same type.  The output value is of the same type as the input values.
+    Return the creater value of ``a`` and ``b``. The input values may be any numeric type as long as they are both of the same type.  The output value is the same as the input values.
 
     .. code-block:: python
 
@@ -459,7 +447,7 @@ Math
 
 .. py:function:: min(a: numeric, b: numeric) -> numeric
 
-    Returns the lesser value of ``a`` and ``b``. The input values may be any numeric type as long as they are both of the same type.  The output value is of the same type as the input values.
+    Returns the lesser value of ``a`` and ``b``. The input values may be any numeric type as long as they are both of the same type.  The output value is the same as the input values.
 
     .. code-block:: python
 
@@ -545,136 +533,6 @@ Math
         >>> ExampleContract.foo(11, 2, 5)
         2
 
-.. py:function:: unsafe_add(x: integer, y: integer) -> integer
-
-    Add ``x`` and ``y``, without checking for overflow. ``x`` and ``y`` must both be integers of the same type. If the result exceeds the bounds of the input type, it will be wrapped.
-
-    .. code-block:: python
-
-        @external
-        @view
-        def foo(x: uint8, y: uint8) -> uint8:
-            return unsafe_add(x, y)
-
-        @external
-        @view
-        def bar(x: int8, y: int8) -> int8:
-            return unsafe_add(x, y)
-
-
-    .. code-block:: python
-
-        >>> ExampleContract.foo(1, 1)
-        2
-
-        >>> ExampleContract.foo(255, 255)
-        254
-
-        >>> ExampleContract.bar(127, 127)
-        -2
-
-.. note::
-    Performance note: for the native word types of the EVM ``uint256`` and ``int256``, this will compile to a single ``ADD`` instruction, since the EVM natively wraps addition on 256-bit words.
-
-.. py:function:: unsafe_sub(x: integer, y: integer) -> integer
-
-    Subtract ``x`` and ``y``, without checking for overflow. ``x`` and ``y`` must both be integers of the same type. If the result underflows the bounds of the input type, it will be wrapped.
-
-    .. code-block:: python
-
-        @external
-        @view
-        def foo(x: uint8, y: uint8) -> uint8:
-            return unsafe_sub(x, y)
-
-        @external
-        @view
-        def bar(x: int8, y: int8) -> int8:
-            return unsafe_sub(x, y)
-
-
-    .. code-block:: python
-
-        >>> ExampleContract.foo(4, 3)
-        1
-
-        >>> ExampleContract.foo(0, 1)
-        255
-
-        >>> ExampleContract.bar(-128, 1)
-        127
-
-.. note::
-    Performance note: for the native word types of the EVM ``uint256`` and ``int256``, this will compile to a single ``SUB`` instruction, since the EVM natively wraps subtraction on 256-bit words.
-
-
-.. py:function:: unsafe_mul(x: integer, y: integer) -> integer
-
-    Multiply ``x`` and ``y``, without checking for overflow. ``x`` and ``y`` must both be integers of the same type. If the result exceeds the bounds of the input type, it will be wrapped.
-
-    .. code-block:: python
-
-        @external
-        @view
-        def foo(x: uint8, y: uint8) -> uint8:
-            return unsafe_mul(x, y)
-
-        @external
-        @view
-        def bar(x: int8, y: int8) -> int8:
-            return unsafe_mul(x, y)
-
-
-    .. code-block:: python
-
-        >>> ExampleContract.foo(1, 1)
-        1
-
-        >>> ExampleContract.foo(255, 255)
-        1
-
-        >>> ExampleContract.bar(-128, -128)
-        0
-
-        >>> ExampleContract.bar(127, -128)
-        -128
-
-.. note::
-    Performance note: for the native word types of the EVM ``uint256`` and ``int256``, this will compile to a single ``MUL`` instruction, since the EVM natively wraps multiplication on 256-bit words.
-
-
-.. py:function:: unsafe_div(x: integer, y: integer) -> integer
-
-    Divide ``x`` and ``y``, without checking for division-by-zero. ``x`` and ``y`` must both be integers of the same type. If the denominator is zero, the result will (following EVM semantics) be zero.
-
-    .. code-block:: python
-
-        @external
-        @view
-        def foo(x: uint8, y: uint8) -> uint8:
-            return unsafe_div(x, y)
-
-        @external
-        @view
-        def bar(x: int8, y: int8) -> int8:
-            return unsafe_div(x, y)
-
-
-    .. code-block:: python
-
-        >>> ExampleContract.foo(1, 1)
-        1
-
-        >>> ExampleContract.foo(1, 0)
-        0
-
-        >>> ExampleContract.bar(-128, -1)
-        -128
-
-.. note::
-    Performance note: this will compile to a single ``SDIV`` or ``DIV`` instruction, depending on if the inputs are signed or unsigned (respectively).
-
-
 Utilities
 =========
 
@@ -703,7 +561,7 @@ Utilities
 
     .. note::
 
-        The EVM only provides access to the most recent 256 blocks. This function returns ``EMPTY_BYTES32`` if the block number is greater than or equal to the current block number or more than 256 blocks behind the current block.
+        The EVM only provides access to the most 256 blocks. This function returns ``EMPTY_BYTES32`` if the block number is greater than or equal to the current block number or more than 256 blocks behind the current block.
 
     .. code-block:: python
 
@@ -766,8 +624,9 @@ Utilities
 
         >>> ExampleContract.foo()
 
-.. py:function:: _abi_encode(*args, ensure_tuple: bool = True) -> Bytes[<depends on input>]
+.. py:function:: _abi_encode(\*args, ensure_tuple: bool = True) -> Bytes[<depends on input>]
 
+    BETA, USE WITH CARE.
     Takes a variable number of args as input, and returns the ABIv2-encoded bytestring. Used for packing arguments to raw_call, EIP712 and other cases where a consistent and efficient serialization method is needed.
     Once this function has seen more use we provisionally plan to put it into the ``ethereum.abi`` namespace.
 
@@ -783,7 +642,7 @@ Utilities
         @view
         def foo() -> Bytes[132]:
             x: uint256 = 1
-            y: Bytes[32] = b"234"
+            y: Bytes[32] = "234"
             return _abi_encode(x, y, method_id=method_id("foo()"))
 
     .. code-block:: python
